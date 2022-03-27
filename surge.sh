@@ -50,6 +50,13 @@ cat ${SHELL_FOLDER}/base/domains/*.reject 2>/dev/null \
     | uniq  \
     | awk '{print "DOMAIN-SUFFIX,"$0}' >>"${SHELL_FOLDER}/surge/reject.list"
 
+# Domain-keywords lists
+cat ${SHELL_FOLDER}/base/domain_keywords/*.proxy 2>/dev/null \
+    | grep -v '^\s*$' \
+    | sort  \
+    | uniq  \
+    | awk '{print "DOMAIN-KEYWORD,"$0}' >>"${SHELL_FOLDER}/surge/proxy.list"
+
 # CIDR lists
 cat ${SHELL_FOLDER}/base/cidr/*.proxy 2>/dev/null \
     | grep -v '^\s*$' \

@@ -35,6 +35,13 @@ cat ${SHELL_FOLDER}/base/domains/*.reject 2>/dev/null \
     | uniq  \
     | awk '{print "DOMAIN-SUFFIX,"$0",REJECT"}' >>"${SHELL_FOLDER}/shadowrocket/config.conf"
 
+# Domain lists
+cat ${SHELL_FOLDER}/base/domain_keywords/*.proxy 2>/dev/null \
+    | grep -v '^\s*$' \
+    | sort  \
+    | uniq  \
+    | awk '{print "DOMAIN-KEYWORD,"$0",GROUP1,force-remote-dns"}' >>"${SHELL_FOLDER}/shadowrocket/config.conf"
+
 # CIDR lists
 cat ${SHELL_FOLDER}/base/cidr/*.proxy 2>/dev/null \
     | grep -v '^\s*$' \
