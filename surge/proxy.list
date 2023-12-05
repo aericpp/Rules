@@ -64,7 +64,6 @@ DOMAIN-SUFFIX,jsdelivr.net
 DOMAIN-SUFFIX,m-team.cc
 DOMAIN-SUFFIX,medium.com
 DOMAIN-SUFFIX,myoctocat.com
-DOMAIN-SUFFIX,nssurge.com
 DOMAIN-SUFFIX,oyunfor.com
 DOMAIN-SUFFIX,pinimg.com
 DOMAIN-SUFFIX,pinterest.com
@@ -111,6 +110,7 @@ DOMAIN-SUFFIX,youtu.be
 DOMAIN-SUFFIX,youtube.com
 DOMAIN-SUFFIX,yt.be
 DOMAIN-SUFFIX,ytimg.com
+DOMAIN,nssurge.com
 DOMAIN-KEYWORD,amazonaws.com
 IP-CIDR,109.239.140.0/24,no-resolve
 IP-CIDR,149.154.160.0/22,no-resolve
