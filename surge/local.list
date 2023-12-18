@@ -3,7 +3,9 @@ PROCESS-NAME,FBCalDAV-XPC
 PROCESS-NAME,cloudd
 PROCESS-NAME,findmydeviced
 PROCESS-NAME,iCloudNotificationAgent
+PROCESS-NAME,netbiosd
 PROCESS-NAME,nsurlsessiond
+PROCESS-NAME,trustd
 DOMAIN-SUFFIX,aod.itunes.apple.com
 DOMAIN-SUFFIX,api.smoot.apple.cn
 DOMAIN-SUFFIX,api.smoot.apple.com
@@ -24,3 +26,15 @@ DOMAIN-SUFFIX,push.apple.com
 DOMAIN-SUFFIX,smp-device-content.apple.com
 DOMAIN-SUFFIX,streamingaudio.itunes.apple.com
 DOMAIN-SUFFIX,xp.apple.com
+DOMAIN,aod.itunes.apple.com
+DOMAIN,api.smoot.apple.cn
+DOMAIN,api.smoot.apple.com
+DOMAIN,captive.apple.com
+DOMAIN,configuration.apple.com
+DOMAIN,gs-loc.apple.com
+DOMAIN,guzzoni.apple.com
+DOMAIN,mesu.apple.com
+DOMAIN,mvod.itunes.apple.com
+DOMAIN,smp-device-content.apple.com
+DOMAIN,streamingaudio.itunes.apple.com
+DOMAIN,xp.apple.com

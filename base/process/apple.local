@@ -3,4 +3,6 @@ FBCalDAV-XPC
 cloudd
 findmydeviced
 iCloudNotificationAgent
+netbiosd
 nsurlsessiond
+trustd
