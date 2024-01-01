@@ -96,7 +96,6 @@ DOMAIN-SUFFIX,hdslb.com
 DOMAIN-SUFFIX,hemamax.com
 DOMAIN-SUFFIX,hemaos.com
 DOMAIN-SUFFIX,hemashare.cn
-DOMAIN-SUFFIX,hotmail.com
 DOMAIN-SUFFIX,icourse163.org
 DOMAIN-SUFFIX,idqqimg.com
 DOMAIN-SUFFIX,im9.com
@@ -113,18 +112,12 @@ DOMAIN-SUFFIX,juhuasuan.com
 DOMAIN-SUFFIX,kaola.com
 DOMAIN-SUFFIX,kumiao.com
 DOMAIN-SUFFIX,lingshoujia.com
-DOMAIN-SUFFIX,live.com
-DOMAIN-SUFFIX,live.net
 DOMAIN-SUFFIX,lofter.com
 DOMAIN-SUFFIX,mashort.cn
 DOMAIN-SUFFIX,mei.com
-DOMAIN-SUFFIX,microsoft.com
-DOMAIN-SUFFIX,microsoftonline.com
 DOMAIN-SUFFIX,mincdn.com
 DOMAIN-SUFFIX,mipcdn.com
 DOMAIN-SUFFIX,mmstat.com
-DOMAIN-SUFFIX,msauth.net
-DOMAIN-SUFFIX,msftauth.net
 DOMAIN-SUFFIX,myapp.com
 DOMAIN-SUFFIX,myqcloud.com
 DOMAIN-SUFFIX,nease.net
@@ -132,10 +125,6 @@ DOMAIN-SUFFIX,netease-inc.com
 DOMAIN-SUFFIX,netease.com
 DOMAIN-SUFFIX,netease.im
 DOMAIN-SUFFIX,nuomi.com
-DOMAIN-SUFFIX,office.com
-DOMAIN-SUFFIX,office365.com
-DOMAIN-SUFFIX,onedrive.com
-DOMAIN-SUFFIX,outlook.com
 DOMAIN-SUFFIX,pailitao.com
 DOMAIN-SUFFIX,pps.tv
 DOMAIN-SUFFIX,ppsimg.com
@@ -153,7 +142,6 @@ DOMAIN-SUFFIX,qy.net
 DOMAIN-SUFFIX,qzone.com
 DOMAIN-SUFFIX,rtx.com.cn
 DOMAIN-SUFFIX,servicewechat.com
-DOMAIN-SUFFIX,sharepoint.com
 DOMAIN-SUFFIX,shifen.com
 DOMAIN-SUFFIX,shyhhema.com
 DOMAIN-SUFFIX,smartapps.cn
@@ -192,7 +180,6 @@ DOMAIN-SUFFIX,wechat.com
 DOMAIN-SUFFIX,wegame.com
 DOMAIN-SUFFIX,wegame.com.cn
 DOMAIN-SUFFIX,weiyun.com
-DOMAIN-SUFFIX,windows.net
 DOMAIN-SUFFIX,xianfae.com
 DOMAIN-SUFFIX,xiaodutv.com
 DOMAIN-SUFFIX,ydstatic.com
