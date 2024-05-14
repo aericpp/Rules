@@ -6,7 +6,6 @@ echo $SHELL_FOLDER
 rm -f ${SHELL_FOLDER}/autoproxy/*
 
 echo "[AutoProxy]" >"${SHELL_FOLDER}/autoproxy/proxy.list.tmp"
-echo "[AutoProxy]" >"${SHELL_FOLDER}/autoproxy/gia.list.tmp"
 echo "[AutoProxy]" >"${SHELL_FOLDER}/autoproxy/local.list.tmp"
 echo "[AutoProxy]" >"${SHELL_FOLDER}/autoproxy/reject.list.tmp"
 echo "[AutoProxy]" >"${SHELL_FOLDER}/autoproxy/wg.list.tmp"
@@ -48,7 +47,7 @@ cat ${SHELL_FOLDER}/base/domains/*.gia 2>/dev/null \
     | grep -v '^\s*$' \
     | sort  \
     | uniq  \
-    | awk '{print "||"$0}' >>"${SHELL_FOLDER}/autoproxy/gia.list.tmp"
+    | awk '{print "||"$0}' >>"${SHELL_FOLDER}/autoproxy/proxy.list.tmp"
 
 # Domain lists
 
@@ -105,15 +104,12 @@ cat ${SHELL_FOLDER}/base/domain_keywords/*.gia 2>/dev/null \
     | grep -v '^\s*$' \
     | sort  \
     | uniq  \
-    | awk '{print "||*"$0"*"}' >>"${SHELL_FOLDER}/autoproxy/gia.list.tmp"
+    | awk '{print "||*"$0"*"}' >>"${SHELL_FOLDER}/autoproxy/proxy.list.tmp"
 
 
 cat "${SHELL_FOLDER}/autoproxy/proxy.list.tmp" \
     | base64 | fold -w 64 \
     >"${SHELL_FOLDER}/autoproxy/proxy.list"
-cat "${SHELL_FOLDER}/autoproxy/gia.list.tmp" \
-    | base64 | fold -w 64 \
-    >>"${SHELL_FOLDER}/autoproxy/proxy.list"
 cat "${SHELL_FOLDER}/autoproxy/local.list.tmp" \
     | base64 | fold -w 64 \
     >"${SHELL_FOLDER}/autoproxy/local.list"
