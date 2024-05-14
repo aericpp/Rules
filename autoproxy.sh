@@ -113,7 +113,7 @@ cat "${SHELL_FOLDER}/autoproxy/proxy.list.tmp" \
     >"${SHELL_FOLDER}/autoproxy/proxy.list"
 cat "${SHELL_FOLDER}/autoproxy/gia.list.tmp" \
     | base64 | fold -w 64 \
-    >"${SHELL_FOLDER}/autoproxy/gia.list"
+    >>"${SHELL_FOLDER}/autoproxy/proxy.list"
 cat "${SHELL_FOLDER}/autoproxy/local.list.tmp" \
     | base64 | fold -w 64 \
     >"${SHELL_FOLDER}/autoproxy/local.list"
