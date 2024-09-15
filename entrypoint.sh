@@ -18,8 +18,11 @@ test -d "${CURRENT_PATH}/release" || mkdir "${CURRENT_PATH}/release"
 cp "${CURRENT_PATH}/domain-list-community/dlc.dat" "${CURRENT_PATH}/release/"
 
 cd "${CURRENT_PATH}/Rules/"
-tar cvzf surge.tar.gz surge
-tar cvzf autoproxy.tar.gz autoproxy
-tar cvzf shadowrocket.tar.gz shadowrocket
+tar cvzf "${CURRENT_PATH}/release/surge.tar.gz" surge
+tar cvzf "${CURRENT_PATH}/release/autoproxy.tar.gz" autoproxy
+tar cvzf "${CURRENT_PATH}/release/shadowrocket.tar.gz" shadowrocket
 
-cp "${CURRENT_PATH}/Rules/*.tar.gz" "${CURRENT_PATH}/release/"
+ls -alh "${CURRENT_PATH}/Rules/"
+
+ls -alh "${CURRENT_PATH}/release/"
+
