@@ -2,7 +2,7 @@
 set -eu
 
 sudo apt update
-sudo apt install -qy build-essential libpcre3-dev zlib1g-dev git
+sudo apt install -qy git
 
 CURRENT_PATH=$(pwd)
 

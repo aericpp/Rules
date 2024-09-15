@@ -8,11 +8,14 @@ jobs:
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v3
-      
-      - name: compile v-mod
-        uses: docker://golang
+
+      - uses: actions/setup-go@v5
         with:
-          entrypoint: /github/workspace/entrypoint.sh
+          go-version: '1.20'
+          check-latest: true
+
+      - name: compile v-mod
+        run: bash /github/workspace/entrypoint.sh
 
       - name: upload artifact
         uses: actions/upload-artifact@master
