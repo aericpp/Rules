@@ -15,7 +15,9 @@ jobs:
           check-latest: true
 
       - name: compile v-mod
-        run: bash /github/workspace/entrypoint.sh
+        run: |
+          chmod +x entrypoint.sh
+          bash entrypoint.sh
 
       - name: upload artifact
         uses: actions/upload-artifact@master
