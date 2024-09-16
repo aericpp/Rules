@@ -28,7 +28,7 @@ jobs:
 
       - name: release_version
         run: |
-          echo "RELEASE_VERSION=$((new Date()).toISOString().replace(/[-\:\.]/g, '_'))" >> $GITHUB_OUTPUT
+          echo "RELEASE_VERSION=$(date +"%Y%m%d_%H-%M-%S")" >> $GITHUB_OUTPUT
 
       - name: release
         uses: ncipollo/release-action@v1
@@ -38,10 +38,10 @@ jobs:
           tag: ${{ format('v_{0}', steps.release_version.outputs.RELEASE_VERSION) }}
           artifacts: 'release/*'
       
-      # - name: 'Mirror to gitlab'
-      #   uses: pixta-dev/repository-mirroring-action@v1
-      #   with:
-      #     target_repo_url:
-      #       git@gitlab.com:Aericpp/Rules.git
-      #     ssh_private_key:
-      #       ${{ secrets.GITLAB_SYNC }}
+      - name: 'Mirror to gitlab'
+        uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url:
+            git@gitlab.com:Aericpp/Rules.git
+          ssh_private_key:
+            ${{ secrets.GITLAB_SYNC }}
