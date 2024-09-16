@@ -6,8 +6,6 @@ sudo apt install -qy git
 
 CURRENT_PATH=$(pwd)
 
-# cd /root
-
 git clone https://github.com/aericpp/Rules.git
 git clone https://github.com/v2fly/domain-list-community.git
 cd "${CURRENT_PATH}/domain-list-community"
@@ -25,6 +23,8 @@ tar cvzf "${CURRENT_PATH}/release/shadowrocket.tar.gz" shadowrocket
 cp -R "${CURRENT_PATH}/Rules/surge" "${CURRENT_PATH}/release/"
 cp -R "${CURRENT_PATH}/Rules/autoproxy" "${CURRENT_PATH}/release/"
 cp -R "${CURRENT_PATH}/Rules/shadowrocket" "${CURRENT_PATH}/release/"
+
+ls -alh "${CURRENT_PATH}/"
 
 ls -alh "${CURRENT_PATH}/Rules/"
 

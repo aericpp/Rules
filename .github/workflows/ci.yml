@@ -1,13 +1,13 @@
-name: 'Github Actions Mirror to Gitlab'
+name: 'Github Actions Release'
 
 on: [push, delete]
 
 jobs:
-  mirror_to_gitlab:
+  action_release:
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - uses: actions/setup-go@v5
         with:
@@ -26,12 +26,16 @@ jobs:
           path: |
             release/
 
+      - name: release_version
+        run: |
+          echo "RELEASE_VERSION=$((new Date()).toISOString().replace(/[-\:\.]/g, '_'))" >> $GITHUB_OUTPUT
+
       - name: release
         uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: v1.0.0
-          tag: v1.0.0
+          name: ${{ format('v_{0}', steps.release_version.outputs.RELEASE_VERSION) }}
+          tag: ${{ format('v_{0}', steps.release_version.outputs.RELEASE_VERSION) }}
           artifacts: 'release/*'
       
       # - name: 'Mirror to gitlab'
