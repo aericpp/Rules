@@ -13,11 +13,11 @@ test -d "${CURRENT_PATH}/shadowrocket" || mkdir "${CURRENT_PATH}/shadowrocket"
 test -d "${CURRENT_PATH}/autoproxy" || mkdir "${CURRENT_PATH}/autoproxy"
 
 # 
-bash sort.sh
-bash surge.sh
-bash shadowrocket.sh
-bash autoproxy.sh
-bash v.sh
+bash scripts/sort.sh
+bash scripts/surge.sh
+bash scripts/shadowrocket.sh
+bash scripts/autoproxy.sh
+bash scripts/v.sh
 
 # compile the geosite.dat file
 git clone https://github.com/v2fly/domain-list-community.git
