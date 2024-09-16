@@ -26,7 +26,8 @@ jobs:
           path: |
             release/
 
-      - name: release_version
+      - name: release version
+        id: release_version
         run: |
           echo "RELEASE_VERSION=$(date +"%Y%m%d_%H-%M-%S")" >> $GITHUB_OUTPUT
 
