@@ -38,12 +38,6 @@ cat ${BASE_FOLDER}/base/domains/*.reject 2>/dev/null \
     | uniq  \
     | awk '{print "domain:"$0}' >>"${BASE_FOLDER}/v/reject"
 
-cat ${BASE_FOLDER}/base/domains/*.gia 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "domain:"$0}' >>"${BASE_FOLDER}/v/proxy"
-
 # Domain lists
 
 cat ${BASE_FOLDER}/base/domain/*.proxy 2>/dev/null \
@@ -82,9 +76,3 @@ cat ${BASE_FOLDER}/base/domain_keywords/*.wg 2>/dev/null \
     | sort  \
     | uniq  \
     | awk '{print "keyword:"$0}' >>"${BASE_FOLDER}/v/wg"
-
-cat ${BASE_FOLDER}/base/domain_keywords/*.gia 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "keyword:"$0}' >>"${BASE_FOLDER}/v/proxy"

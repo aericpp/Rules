@@ -47,7 +47,6 @@ for file in autoproxy/*; do
   cp $file "release/${file//\//_}"
 done
 
-
 for file in shadowrocket/*; do
   cp $file "release/${file//\//_}"
 done

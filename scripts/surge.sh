@@ -63,12 +63,6 @@ cat ${BASE_FOLDER}/base/domains/*.reject 2>/dev/null \
     | uniq  \
     | awk '{print "DOMAIN-SUFFIX,"$0}' >>"${BASE_FOLDER}/surge/reject.list"
 
-cat ${BASE_FOLDER}/base/domains/*.gia 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "DOMAIN-SUFFIX,"$0}' >>"${BASE_FOLDER}/surge/gia.list"
-
 # Domain lists
 
 cat ${BASE_FOLDER}/base/domain/*.proxy 2>/dev/null \
@@ -125,12 +119,6 @@ cat ${BASE_FOLDER}/base/domain_keywords/*.wk 2>/dev/null \
     | sort  \
     | uniq  \
     | awk '{print "DOMAIN-KEYWORD,"$0}' >>"${BASE_FOLDER}/surge/wk.list"
-
-cat ${BASE_FOLDER}/base/domain_keywords/*.gia 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "DOMAIN-KEYWORD,"$0}' >>"${BASE_FOLDER}/surge/gia.list"
 
 # CIDR lists
 cat ${BASE_FOLDER}/base/cidr/*.proxy 2>/dev/null \

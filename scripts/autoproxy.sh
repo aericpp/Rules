@@ -44,12 +44,6 @@ cat ${BASE_FOLDER}/base/domains/*.reject 2>/dev/null \
     | uniq  \
     | awk '{print "||"$0}' >>"${BASE_FOLDER}/autoproxy/reject.list.tmp"
 
-cat ${BASE_FOLDER}/base/domains/*.gia 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "||"$0}' >>"${BASE_FOLDER}/autoproxy/proxy.list.tmp"
-
 # Domain lists
 
 cat ${BASE_FOLDER}/base/domain/*.proxy 2>/dev/null \
@@ -100,13 +94,6 @@ cat ${BASE_FOLDER}/base/domain_keywords/*.wk 2>/dev/null \
     | sort  \
     | uniq  \
     | awk '{print "||*"$0"*"}' >>"${BASE_FOLDER}/autoproxy/wk.list.tmp"
-
-cat ${BASE_FOLDER}/base/domain_keywords/*.gia 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "||*"$0"*"}' >>"${BASE_FOLDER}/autoproxy/proxy.list.tmp"
-
 
 cat "${BASE_FOLDER}/autoproxy/proxy.list.tmp" \
     | base64 | fold -w 64 \
