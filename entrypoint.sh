@@ -22,6 +22,10 @@ tar cvzf "${CURRENT_PATH}/release/surge.tar.gz" surge
 tar cvzf "${CURRENT_PATH}/release/autoproxy.tar.gz" autoproxy
 tar cvzf "${CURRENT_PATH}/release/shadowrocket.tar.gz" shadowrocket
 
+cp -R "${CURRENT_PATH}/Rules/surge" "${CURRENT_PATH}/release/"
+cp -R "${CURRENT_PATH}/Rules/autoproxy" "${CURRENT_PATH}/release/"
+cp -R "${CURRENT_PATH}/Rules/shadowrocket" "${CURRENT_PATH}/release/"
+
 ls -alh "${CURRENT_PATH}/Rules/"
 
 ls -alh "${CURRENT_PATH}/release/"
