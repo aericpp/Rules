@@ -1,8 +1,8 @@
 #!/bin/bash
 
-SHELL_FOLDER=$(cd "$(dirname "$0")";pwd)
-
-for dir_path in ${SHELL_FOLDER}/base/*; do
+BASE_FOLDER=$(cd "$(dirname "$0")/..";pwd)
+echo "${BASE_FOLDER}"
+for dir_path in ${BASE_FOLDER}/base/*; do
     if test -f $dir_path; then
         continue
     fi
