@@ -1,0 +1,27 @@
+{
+  "input": [
+    {
+      "type": "private",
+      "action": "add"
+    }, {
+      "type": "text",
+      "action": "add",
+      "args": {
+        "inputDir": "./cidr/"
+      }
+    }
+  ],
+  "output": [
+    {
+      "type": "v2rayGeoIPDat",
+      "action": "output",
+      "args": {
+        "outputDir": "./output",
+        "outputName": "geoip.dat"
+      }
+    }, {
+      "type": "text",
+      "action": "output"
+    }
+  ]
+}

@@ -20,14 +20,33 @@ bash scripts/autoproxy.sh
 bash scripts/v.sh
 
 # compile the geosite.dat file
+cd "${CURRENT_PATH}"
 git clone https://github.com/v2fly/domain-list-community.git
 cd "${CURRENT_PATH}/domain-list-community"
 go mod download
 go run ./ --datapath="${CURRENT_PATH}/v"
 
+
+# compile the geoip.dat file
+cd "${CURRENT_PATH}"
+git clone https://github.com/v2fly/geoip.git
+cd "${CURRENT_PATH}/geoip"
+go mod download
+
+test -d "${CURRENT_PATH}/geoip/cidr" || mkdir "${CURRENT_PATH}/geoip/cidr"
+cat ${CURRENT_PATH}/base/cidr/*.proxy 2>/dev/null \
+    | grep -v '^\s*$' \
+    | sort  \
+    | uniq  \
+    | awk '{print $0}' >>"${CURRENT_PATH}/geoip/cidr/proxy"
+cp "${CURRENT_PATH}/geoip_config.json" .
+go run ./ -c ./geoip_config.json
+
 # handle the release files
 test -d "${CURRENT_PATH}/release" || mkdir "${CURRENT_PATH}/release"
 cp "${CURRENT_PATH}/domain-list-community/dlc.dat" "${CURRENT_PATH}/release/"
+
+cp "${CURRENT_PATH}/geoip/output/geoip.dat" "${CURRENT_PATH}/release/"
 
 cd "${CURRENT_PATH}"
 tar cvzf "${CURRENT_PATH}/release/surge.tar.gz" surge
