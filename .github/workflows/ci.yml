@@ -31,10 +31,10 @@ jobs:
         run: |
           echo "RELEASE_VERSION=$(date +"%Y%m%d_%H-%M-%S")" >> $GITHUB_OUTPUT
 
-    - name: notify
-      if: ${{ steps.check_release.outputs.FLAG == 1 }}
-      run: |
-        curl "${{secrets.PUSH_URL}}?title=规则发布"
+      - name: notify
+        if: ${{ steps.check_release.outputs.FLAG == 1 }}
+        run: |
+          curl "${{secrets.PUSH_URL}}?title=规则发布"
 
       - name: release
         uses: ncipollo/release-action@v1
