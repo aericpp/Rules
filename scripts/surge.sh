@@ -26,6 +26,12 @@ cat ${BASE_FOLDER}/base/process/*.proxy 2>/dev/null \
     | uniq  \
     | awk '{print "PROCESS-NAME,"$0}' >>"${BASE_FOLDER}/surge/proxy.list"
 
+cat ${BASE_FOLDER}/base/process/*.direct 2>/dev/null \
+    | grep -v '^\s*$' \
+    | sort  \
+    | uniq  \
+    | awk '{print "PROCESS-NAME,"$0}' >>"${BASE_FOLDER}/surge/direct.list"
+
 # Domain-suffix lists
 cat ${BASE_FOLDER}/base/domains/*.proxy 2>/dev/null \
     | grep -v '^\s*$' \
