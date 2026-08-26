@@ -38,12 +38,13 @@ jobs:
           echo "RELEASE_VERSION=$(date +"%Y%m%d_%H-%M-%S")" >> $GITHUB_OUTPUT
 
       - name: notify
-        if: ${{ secrets.PUSH_URL != '' }}
         env:
           PUSH_URL: ${{ secrets.PUSH_URL }}
         run: |
-          curl --fail --silent --show-error --retry 3 --get \
-            --data-urlencode 'title=规则发布' "$PUSH_URL"
+          if [[ -n "$PUSH_URL" ]]; then
+            curl --fail --silent --show-error --retry 3 --get \
+              --data-urlencode 'title=规则发布' "$PUSH_URL"
+          fi
 
       - name: release
         uses: ncipollo/release-action@v1
