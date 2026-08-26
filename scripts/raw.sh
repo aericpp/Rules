@@ -13,5 +13,5 @@ for category in proxy local reject wg wk; do
     {
         printf '# raw list\n'
         emit_category_rules "$category"
-    } | write_atomic_output "${OUTPUT_DIR}/${category}_raw.list"
+    } | write_atomic_output "${OUTPUT_DIR}/${category}.list"
 done
