@@ -98,17 +98,24 @@ cat ${BASE_FOLDER}/base/domain_keywords/*.wk 2>/dev/null \
 cat "${BASE_FOLDER}/autoproxy/proxy.list.tmp" \
     | base64 | fold -w 64 \
     >"${BASE_FOLDER}/autoproxy/proxy.list"
+mv "${BASE_FOLDER}/autoproxy/proxy.list.tmp" "${BASE_FOLDER}/autoproxy/proxy_raw.list"
+
 cat "${BASE_FOLDER}/autoproxy/local.list.tmp" \
     | base64 | fold -w 64 \
     >"${BASE_FOLDER}/autoproxy/local.list"
+mv "${BASE_FOLDER}/autoproxy/local.list.tmp" "${BASE_FOLDER}/autoproxy/local_raw.list"
+
 cat "${BASE_FOLDER}/autoproxy/reject.list.tmp" \
     | base64 | fold -w 64 \
     >"${BASE_FOLDER}/autoproxy/reject.list"
+mv "${BASE_FOLDER}/autoproxy/reject.list.tmp" "${BASE_FOLDER}/autoproxy/reject_raw.list"
+
 cat "${BASE_FOLDER}/autoproxy/wg.list.tmp" \
     | base64 | fold -w 64 \
     >"${BASE_FOLDER}/autoproxy/wg.list"
+mv "${BASE_FOLDER}/autoproxy/wg.list.tmp" "${BASE_FOLDER}/autoproxy/wg_raw.list"
+
 cat "${BASE_FOLDER}/autoproxy/wk.list.tmp" \
     | base64 | fold -w 64 \
     >"${BASE_FOLDER}/autoproxy/wk.list"
-
-rm -rf ${BASE_FOLDER}/autoproxy/*.tmp
+mv "${BASE_FOLDER}/autoproxy/wk.list.tmp" "${BASE_FOLDER}/autoproxy/wk_raw.list"

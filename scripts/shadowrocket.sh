@@ -16,13 +16,6 @@ echo "" >>"${BASE_FOLDER}/shadowrocket/config.conf"
 
 echo '[Rule]' >>"${BASE_FOLDER}/shadowrocket/config.conf"
 
-# UserAgent lists
-cat ${BASE_FOLDER}/base/useragent/*.proxy 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "USER-AGENT,"$0",GROUP1"}' >>"${BASE_FOLDER}/shadowrocket/config.conf"
-
 # Domain lists
 cat ${BASE_FOLDER}/base/domains/*.proxy 2>/dev/null \
     | grep -v '^\s*$' \

@@ -6,13 +6,6 @@ echo $BASE_FOLDER
 test -d "${BASE_FOLDER}/surge" || mkdir "${BASE_FOLDER}/surge"
 rm -f ${BASE_FOLDER}/surge/*
 
-# UserAgent lists
-cat ${BASE_FOLDER}/base/useragent/*.proxy 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "USER-AGENT,"$0}' >>"${BASE_FOLDER}/surge/proxy.list"
-
 # ProcessName lists
 cat ${BASE_FOLDER}/base/process/*.local 2>/dev/null \
     | grep -v '^\s*$' \
