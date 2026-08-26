@@ -1,71 +1,60 @@
-#!/bin/bash
-set -eu
+#!/usr/bin/env bash
 
-sudo apt update
-sudo apt install -qy git
+set -euo pipefail
 
-CURRENT_PATH=$(pwd)
+CURRENT_PATH=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+SCRIPT_DIR="${CURRENT_PATH}/scripts"
+BUILD_DIR=$(mktemp -d)
+RELEASE_DIR="${BUILD_DIR}/release"
 
-# 
-test -d "${CURRENT_PATH}/v" || mkdir "${CURRENT_PATH}/v"
-test -d "${CURRENT_PATH}/surge" || mkdir "${CURRENT_PATH}/surge"
-test -d "${CURRENT_PATH}/shadowrocket" || mkdir "${CURRENT_PATH}/shadowrocket"
-test -d "${CURRENT_PATH}/autoproxy" || mkdir "${CURRENT_PATH}/autoproxy"
+cleanup() {
+    rm -rf "$BUILD_DIR"
+}
+trap cleanup EXIT
 
-# 
-bash scripts/sort.sh
-bash scripts/surge.sh
-bash scripts/shadowrocket.sh
-bash scripts/autoproxy.sh
-bash scripts/v.sh
+umask 022
 
-# compile the geosite.dat file
-cd "${CURRENT_PATH}"
-git clone https://github.com/v2fly/domain-list-community.git
-cd "${CURRENT_PATH}/domain-list-community"
-go mod download
-go run ./ --datapath="${CURRENT_PATH}/v"
+bash "${SCRIPT_DIR}/validate.sh"
+bash "${SCRIPT_DIR}/surge.sh"
+bash "${SCRIPT_DIR}/shadowrocket.sh"
+bash "${SCRIPT_DIR}/autoproxy.sh"
+bash "${SCRIPT_DIR}/raw.sh"
+bash "${SCRIPT_DIR}/v.sh"
 
+git clone --depth 1 https://github.com/v2fly/domain-list-community.git \
+    "${BUILD_DIR}/domain-list-community"
+(
+    cd "${BUILD_DIR}/domain-list-community"
+    go mod download
+    go run ./ --datapath="${CURRENT_PATH}/v"
+)
 
-# compile the geoip.dat file
-cd "${CURRENT_PATH}"
-git clone https://github.com/v2fly/geoip.git
-cd "${CURRENT_PATH}/geoip"
-go mod download
+git clone --depth 1 https://github.com/v2fly/geoip.git "${BUILD_DIR}/geoip"
+(
+    cd "${BUILD_DIR}/geoip"
+    go mod download
+    mkdir -p cidr
+    source "${SCRIPT_DIR}/lib.sh"
+    collect_rules "${CURRENT_PATH}/base/cidr" proxy > cidr/proxy
+    cp "${CURRENT_PATH}/geoip_config.json" geoip_config.json
+    go run ./ -c ./geoip_config.json
+)
 
-test -d "${CURRENT_PATH}/geoip/cidr" || mkdir "${CURRENT_PATH}/geoip/cidr"
-cat ${CURRENT_PATH}/base/cidr/*.proxy 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print $0}' >>"${CURRENT_PATH}/geoip/cidr/proxy"
-cp "${CURRENT_PATH}/geoip_config.json" .
-go run ./ -c ./geoip_config.json
+mkdir -p "$RELEASE_DIR"
+cp "${BUILD_DIR}/domain-list-community/dlc.dat" "$RELEASE_DIR/"
+cp "${BUILD_DIR}/geoip/output/geoip.dat" "$RELEASE_DIR/"
 
-# handle the release files
-test -d "${CURRENT_PATH}/release" || mkdir "${CURRENT_PATH}/release"
-cp "${CURRENT_PATH}/domain-list-community/dlc.dat" "${CURRENT_PATH}/release/"
+for directory in surge autoproxy shadowrocket raw; do
+    tar -czf "${RELEASE_DIR}/${directory}.tar.gz" -C "$CURRENT_PATH" "$directory"
+    cp -R "${CURRENT_PATH}/${directory}" "$RELEASE_DIR/"
 
-cp "${CURRENT_PATH}/geoip/output/geoip.dat" "${CURRENT_PATH}/release/"
-
-cd "${CURRENT_PATH}"
-tar cvzf "${CURRENT_PATH}/release/surge.tar.gz" surge
-tar cvzf "${CURRENT_PATH}/release/autoproxy.tar.gz" autoproxy
-tar cvzf "${CURRENT_PATH}/release/shadowrocket.tar.gz" shadowrocket
-
-cp -R "${CURRENT_PATH}/surge" "${CURRENT_PATH}/release/"
-cp -R "${CURRENT_PATH}/autoproxy" "${CURRENT_PATH}/release/"
-cp -R "${CURRENT_PATH}/shadowrocket" "${CURRENT_PATH}/release/"
-
-cd "${CURRENT_PATH}"
-for file in surge/*; do
-  cp $file "release/${file//\//_}"
+    for file in "${CURRENT_PATH}/${directory}"/*; do
+        [[ -f "$file" ]] || continue
+        cp "$file" "${RELEASE_DIR}/${directory}_$(basename "$file")"
+    done
 done
 
-for file in autoproxy/*; do
-  cp $file "release/${file//\//_}"
-done
+rm -rf "${CURRENT_PATH}/release"
+mv "$RELEASE_DIR" "${CURRENT_PATH}/release"
 
-for file in shadowrocket/*; do
-  cp $file "release/${file//\//_}"
-done
+printf 'release generated at %s\n' "${CURRENT_PATH}/release"

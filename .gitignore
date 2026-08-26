@@ -1,0 +1,13 @@
+.DS_Store
+
+# Generated client rules and release artifacts
+/autoproxy/
+/raw/
+/release/
+/shadowrocket/
+/surge/
+/v/
+
+# Temporary upstream build checkouts
+/domain-list-community/
+/geoip/

@@ -1,14 +1,29 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-BASE_FOLDER=$(cd "$(dirname "$0")/..";pwd)
-echo "${BASE_FOLDER}"
-for dir_path in ${BASE_FOLDER}/base/*; do
-    if test -f $dir_path; then
-        continue
+set -euo pipefail
+
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+# shellcheck source=lib.sh
+source "${SCRIPT_DIR}/lib.sh"
+
+fix=false
+if [[ ${1:-} == "--fix" ]]; then
+    fix=true
+elif [[ $# -gt 0 ]]; then
+    printf 'usage: %s [--fix]\n' "$0" >&2
+    exit 2
+fi
+
+while IFS= read -r -d '' file; do
+    if "$fix"; then
+        sort -u "$file" -o "$file"
+    else
+        sort -c "$file" >/dev/null
     fi
-    for file in ${dir_path}/*; do
-        cat ${file} | sort | uniq >${dir_path}/tmp.file
-        cat ${dir_path}/tmp.file >${file}
-    done
-    rm -f ${dir_path}/tmp.file
-done
+done < <(find "${BASE_FOLDER}/base" -type f -print0)
+
+if "$fix"; then
+    printf 'source rules sorted\n'
+else
+    printf 'source rules are sorted\n'
+fi

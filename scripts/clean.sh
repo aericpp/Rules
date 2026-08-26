@@ -1,9 +1,13 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-BASE_FOLDER=$(cd "$(dirname "$0")/..";pwd)
-echo "${BASE_FOLDER}"
+set -euo pipefail
 
-rm -rf ${BASE_FOLDER}/autoproxy
-rm -rf ${BASE_FOLDER}/v
-rm -rf ${BASE_FOLDER}/shadowrocket
-rm -rf ${BASE_FOLDER}/surge
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+# shellcheck source=lib.sh
+source "${SCRIPT_DIR}/lib.sh"
+
+for directory in autoproxy raw release shadowrocket surge v domain-list-community geoip; do
+    rm -rf "${BASE_FOLDER}/${directory}"
+done
+
+printf 'generated files removed\n'

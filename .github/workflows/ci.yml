@@ -1,6 +1,12 @@
 name: 'Github Actions Release'
 
-on: [push, delete]
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
 
 jobs:
   action_release:
@@ -32,8 +38,12 @@ jobs:
           echo "RELEASE_VERSION=$(date +"%Y%m%d_%H-%M-%S")" >> $GITHUB_OUTPUT
 
       - name: notify
+        if: ${{ secrets.PUSH_URL != '' }}
+        env:
+          PUSH_URL: ${{ secrets.PUSH_URL }}
         run: |
-          curl "${{secrets.PUSH_URL}}?title=规则发布"
+          curl --fail --silent --show-error --retry 3 --get \
+            --data-urlencode 'title=规则发布' "$PUSH_URL"
 
       - name: release
         uses: ncipollo/release-action@v1

@@ -1,102 +1,17 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-BASE_FOLDER=$(cd "$(dirname "$0")/..";pwd)
-echo $BASE_FOLDER
+set -euo pipefail
 
-test -d "${BASE_FOLDER}/raw" || mkdir "${BASE_FOLDER}/raw"
-rm -f ${BASE_FOLDER}/raw/*
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+# shellcheck source=lib.sh
+source "${SCRIPT_DIR}/lib.sh"
 
-echo "# raw list" >"${BASE_FOLDER}/raw/proxy.list.tmp"
-echo "# raw list" >"${BASE_FOLDER}/raw/local.list.tmp"
-echo "# raw list" >"${BASE_FOLDER}/raw/reject.list.tmp"
-echo "# raw list" >"${BASE_FOLDER}/raw/wg.list.tmp"
-echo "# raw list" >"${BASE_FOLDER}/raw/wk.list.tmp"
+OUTPUT_DIR="${BASE_FOLDER}/raw"
+prepare_output_dir "$OUTPUT_DIR"
 
-
-# Domain-suffix lists
-cat ${BASE_FOLDER}/base/domains/*.proxy 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "||"$0}' >>"${BASE_FOLDER}/raw/proxy.list.tmp"
-
-cat ${BASE_FOLDER}/base/domains/*.wk 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "||"$0}' >>"${BASE_FOLDER}/raw/wk.list.tmp"
-
-cat ${BASE_FOLDER}/base/domains/*.wg 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "||"$0}' >>"${BASE_FOLDER}/raw/wg.list.tmp"
-
-cat ${BASE_FOLDER}/base/domains/*.local 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "||"$0}' >>"${BASE_FOLDER}/raw/local.list.tmp"
-
-cat ${BASE_FOLDER}/base/domains/*.reject 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "||"$0}' >>"${BASE_FOLDER}/raw/reject.list.tmp"
-
-# Domain lists
-
-cat ${BASE_FOLDER}/base/domain/*.proxy 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print $0}' >>"${BASE_FOLDER}/raw/proxy.list.tmp"
-
-cat ${BASE_FOLDER}/base/domain/*.wk 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print $0}' >>"${BASE_FOLDER}/raw/wk.list.tmp"
-
-cat ${BASE_FOLDER}/base/domain/*.wg 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print $0}' >>"${BASE_FOLDER}/raw/wg.list.tmp"
-
-cat ${BASE_FOLDER}/base/domain/*.local 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print $0}' >>"${BASE_FOLDER}/raw/local.list.tmp"
-
-cat ${BASE_FOLDER}/base/domain/*.reject 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print $0}' >>"${BASE_FOLDER}/raw/reject.list.tmp"
-
-# Domain-keywords lists
-cat ${BASE_FOLDER}/base/domain_keywords/*.proxy 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "||*"$0"*"}' >>"${BASE_FOLDER}/raw/proxy.list.tmp"
-
-cat ${BASE_FOLDER}/base/domain_keywords/*.wg 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "||*"$0"*"}' >>"${BASE_FOLDER}/raw/wg.list.tmp"
-
-cat ${BASE_FOLDER}/base/domain_keywords/*.wk 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "||*"$0"*"}' >>"${BASE_FOLDER}/raw/wk.list.tmp"
-
-mv "${BASE_FOLDER}/raw/proxy.list.tmp" "${BASE_FOLDER}/raw/proxy_raw.list"
-mv "${BASE_FOLDER}/raw/local.list.tmp" "${BASE_FOLDER}/raw/local_raw.list"
-mv "${BASE_FOLDER}/raw/reject.list.tmp" "${BASE_FOLDER}/raw/reject_raw.list"
-mv "${BASE_FOLDER}/raw/wg.list.tmp" "${BASE_FOLDER}/raw/wg_raw.list"
-mv "${BASE_FOLDER}/raw/wk.list.tmp" "${BASE_FOLDER}/raw/wk_raw.list"
+for category in proxy local reject wg wk; do
+    {
+        printf '# raw list\n'
+        emit_category_rules "$category"
+    } | write_atomic_output "${OUTPUT_DIR}/${category}_raw.list"
+done

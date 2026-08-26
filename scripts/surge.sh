@@ -1,145 +1,50 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-BASE_FOLDER=$(cd "$(dirname "$0")/..";pwd)
-echo $BASE_FOLDER
+set -euo pipefail
 
-test -d "${BASE_FOLDER}/surge" || mkdir "${BASE_FOLDER}/surge"
-rm -f ${BASE_FOLDER}/surge/*
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+# shellcheck source=lib.sh
+source "${SCRIPT_DIR}/lib.sh"
 
-# ProcessName lists
-cat ${BASE_FOLDER}/base/process/*.local 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "PROCESS-NAME,"$0}' >>"${BASE_FOLDER}/surge/local.list"
+OUTPUT_DIR="${BASE_FOLDER}/surge"
+prepare_output_dir "$OUTPUT_DIR"
 
-cat ${BASE_FOLDER}/base/process/*.proxy 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "PROCESS-NAME,"$0}' >>"${BASE_FOLDER}/surge/proxy.list"
+{
+    collect_rules "${BASE_FOLDER}/base/process" local | awk '{print "PROCESS-NAME," $0}'
+    collect_rules "${BASE_FOLDER}/base/domains" local | awk '{print "DOMAIN-SUFFIX," $0}'
+    collect_rules "${BASE_FOLDER}/base/domain" local | awk '{print "DOMAIN," $0}'
+    collect_rules "${BASE_FOLDER}/base/cidr" local | awk '{print "IP-CIDR," $0 ",no-resolve"}'
+} | write_atomic_output "${OUTPUT_DIR}/local.list"
 
-cat ${BASE_FOLDER}/base/process/*.direct 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "PROCESS-NAME,"$0}' >>"${BASE_FOLDER}/surge/direct.list"
+{
+    collect_rules "${BASE_FOLDER}/base/process" proxy | awk '{print "PROCESS-NAME," $0}'
+    collect_rules "${BASE_FOLDER}/base/domains" proxy | awk '{print "DOMAIN-SUFFIX," $0}'
+    collect_rules "${BASE_FOLDER}/base/domain" proxy | awk '{print "DOMAIN," $0}'
+    collect_rules "${BASE_FOLDER}/base/domain_keywords" proxy | awk '{print "DOMAIN-KEYWORD," $0}'
+    collect_rules "${BASE_FOLDER}/base/cidr" proxy | awk '{print "IP-CIDR," $0 ",no-resolve"}'
+} | write_atomic_output "${OUTPUT_DIR}/proxy.list"
 
-# Domain-suffix lists
-cat ${BASE_FOLDER}/base/domains/*.proxy 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "DOMAIN-SUFFIX,"$0}' >>"${BASE_FOLDER}/surge/proxy.list"
+{
+    collect_rules "${BASE_FOLDER}/base/process" direct | awk '{print "PROCESS-NAME," $0}'
+    collect_rules "${BASE_FOLDER}/base/domains" direct | awk '{print "DOMAIN-SUFFIX," $0}'
+    collect_rules "${BASE_FOLDER}/base/domain" direct | awk '{print "DOMAIN," $0}'
+} | write_atomic_output "${OUTPUT_DIR}/direct.list"
 
-cat ${BASE_FOLDER}/base/domains/*.wk 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "DOMAIN-SUFFIX,"$0}' >>"${BASE_FOLDER}/surge/wk.list"
+{
+    collect_rules "${BASE_FOLDER}/base/domains" reject | awk '{print "DOMAIN-SUFFIX," $0}'
+    collect_rules "${BASE_FOLDER}/base/domain" reject | awk '{print "DOMAIN," $0}'
+} | write_atomic_output "${OUTPUT_DIR}/reject.list"
 
-cat ${BASE_FOLDER}/base/domains/*.wg 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "DOMAIN-SUFFIX,"$0}' >>"${BASE_FOLDER}/surge/wg.list"
+{
+    collect_rules "${BASE_FOLDER}/base/domains" wg | awk '{print "DOMAIN-SUFFIX," $0}'
+    collect_rules "${BASE_FOLDER}/base/domain" wg | awk '{print "DOMAIN," $0}'
+    collect_rules "${BASE_FOLDER}/base/domain_keywords" wg | awk '{print "DOMAIN-KEYWORD," $0}'
+    collect_rules "${BASE_FOLDER}/base/cidr" wg | awk '{print "IP-CIDR," $0 ",no-resolve"}'
+} | write_atomic_output "${OUTPUT_DIR}/wg.list"
 
-cat ${BASE_FOLDER}/base/domains/*.local 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "DOMAIN-SUFFIX,"$0}' >>"${BASE_FOLDER}/surge/local.list"
-
-cat ${BASE_FOLDER}/base/domains/*.direct 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "DOMAIN-SUFFIX,"$0}' >>"${BASE_FOLDER}/surge/direct.list"
-
-cat ${BASE_FOLDER}/base/domains/*.reject 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "DOMAIN-SUFFIX,"$0}' >>"${BASE_FOLDER}/surge/reject.list"
-
-# Domain lists
-
-cat ${BASE_FOLDER}/base/domain/*.proxy 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "DOMAIN,"$0}' >>"${BASE_FOLDER}/surge/proxy.list"
-
-cat ${BASE_FOLDER}/base/domain/*.wk 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "DOMAIN,"$0}' >>"${BASE_FOLDER}/surge/wk.list"
-
-cat ${BASE_FOLDER}/base/domain/*.wg 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "DOMAIN,"$0}' >>"${BASE_FOLDER}/surge/wg.list"
-
-cat ${BASE_FOLDER}/base/domain/*.local 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "DOMAIN,"$0}' >>"${BASE_FOLDER}/surge/local.list"
-
-cat ${BASE_FOLDER}/base/domain/*.direct 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "DOMAIN,"$0}' >>"${BASE_FOLDER}/surge/direct.list"
-
-cat ${BASE_FOLDER}/base/domain/*.reject 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "DOMAIN,"$0}' >>"${BASE_FOLDER}/surge/reject.list"
-
-# Domain-keywords lists
-cat ${BASE_FOLDER}/base/domain_keywords/*.proxy 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "DOMAIN-KEYWORD,"$0}' >>"${BASE_FOLDER}/surge/proxy.list"
-
-cat ${BASE_FOLDER}/base/domain_keywords/*.wg 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "DOMAIN-KEYWORD,"$0}' >>"${BASE_FOLDER}/surge/wg.list"
-
-cat ${BASE_FOLDER}/base/domain_keywords/*.wk 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "DOMAIN-KEYWORD,"$0}' >>"${BASE_FOLDER}/surge/wk.list"
-
-# CIDR lists
-cat ${BASE_FOLDER}/base/cidr/*.proxy 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "IP-CIDR,"$0",no-resolve"}' >>"${BASE_FOLDER}/surge/proxy.list"
-
-cat ${BASE_FOLDER}/base/cidr/*.local 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "IP-CIDR,"$0",no-resolve"}' >>"${BASE_FOLDER}/surge/local.list"
-
-cat ${BASE_FOLDER}/base/cidr/*.wg 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "IP-CIDR,"$0",no-resolve"}' >>"${BASE_FOLDER}/surge/wg.list"
-
-cat ${BASE_FOLDER}/base/cidr/*.wk 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "IP-CIDR,"$0",no-resolve"}' >>"${BASE_FOLDER}/surge/wk.list"
+{
+    collect_rules "${BASE_FOLDER}/base/domains" wk | awk '{print "DOMAIN-SUFFIX," $0}'
+    collect_rules "${BASE_FOLDER}/base/domain" wk | awk '{print "DOMAIN," $0}'
+    collect_rules "${BASE_FOLDER}/base/domain_keywords" wk | awk '{print "DOMAIN-KEYWORD," $0}'
+    collect_rules "${BASE_FOLDER}/base/cidr" wk | awk '{print "IP-CIDR," $0 ",no-resolve"}'
+} | write_atomic_output "${OUTPUT_DIR}/wk.list"

@@ -1,78 +1,32 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-BASE_FOLDER=$(cd "$(dirname "$0")/..";pwd)
-echo $BASE_FOLDER
+set -euo pipefail
 
-test -d "${BASE_FOLDER}/v" || mkdir "${BASE_FOLDER}/v"
-rm -f ${BASE_FOLDER}/v/*
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+# shellcheck source=lib.sh
+source "${SCRIPT_DIR}/lib.sh"
 
-echo "# proxy file" >"${BASE_FOLDER}/v/proxy"
-echo "# direct file" >"${BASE_FOLDER}/v/local"
-echo "# reject file" >"${BASE_FOLDER}/v/reject"
-echo "# direct file" >"${BASE_FOLDER}/v/wg"
+OUTPUT_DIR="${BASE_FOLDER}/v"
+prepare_output_dir "$OUTPUT_DIR"
 
+{
+    collect_rules "${BASE_FOLDER}/base/domains" proxy | awk '{print "domain:" $0}'
+    collect_rules "${BASE_FOLDER}/base/domain" proxy | awk '{print "full:" $0}'
+    collect_rules "${BASE_FOLDER}/base/domain_keywords" proxy | awk '{print "keyword:" $0}'
+} | write_atomic_output "${OUTPUT_DIR}/proxy"
 
-# Domain-suffix lists
-cat ${BASE_FOLDER}/base/domains/*.proxy 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "domain:"$0}' >>"${BASE_FOLDER}/v/proxy"
+{
+    collect_rules "${BASE_FOLDER}/base/domains" local | awk '{print "domain:" $0}'
+    collect_rules "${BASE_FOLDER}/base/domain" local | awk '{print "full:" $0}'
+} | write_atomic_output "${OUTPUT_DIR}/local"
 
+{
+    collect_rules "${BASE_FOLDER}/base/domains" reject | awk '{print "domain:" $0}'
+    collect_rules "${BASE_FOLDER}/base/domain" reject | awk '{print "full:" $0}'
+} | write_atomic_output "${OUTPUT_DIR}/reject"
 
-cat ${BASE_FOLDER}/base/domains/*.wg 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "domain:"$0}' >>"${BASE_FOLDER}/v/wg"
-
-cat ${BASE_FOLDER}/base/domains/*.local 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "domain:"$0}' >>"${BASE_FOLDER}/v/local"
-
-cat ${BASE_FOLDER}/base/domains/*.reject 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "domain:"$0}' >>"${BASE_FOLDER}/v/reject"
-
-# Domain lists
-
-cat ${BASE_FOLDER}/base/domain/*.proxy 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "full:"$0}' >>"${BASE_FOLDER}/v/proxy"
-
-cat ${BASE_FOLDER}/base/domain/*.wg 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "full:"$0}' >>"${BASE_FOLDER}/v/wg"
-
-cat ${BASE_FOLDER}/base/domain/*.local 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "full:"$0}' >>"${BASE_FOLDER}/v/local"
-
-cat ${BASE_FOLDER}/base/domain/*.reject 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "full:"$0}' >>"${BASE_FOLDER}/v/reject"
-
-# Domain-keywords lists
-cat ${BASE_FOLDER}/base/domain_keywords/*.proxy 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "keyword:"$0}' >>"${BASE_FOLDER}/v/proxy"
-
-cat ${BASE_FOLDER}/base/domain_keywords/*.wg 2>/dev/null \
-    | grep -v '^\s*$' \
-    | sort  \
-    | uniq  \
-    | awk '{print "keyword:"$0}' >>"${BASE_FOLDER}/v/wg"
+{
+    collect_rules "${BASE_FOLDER}/base/domains" wg | awk '{print "domain:" $0}'
+    collect_rules "${BASE_FOLDER}/base/domain" wg | awk '{print "full:" $0}'
+    collect_rules "${BASE_FOLDER}/base/domain_keywords" wg | awk '{print "keyword:" $0}'
+} | write_atomic_output "${OUTPUT_DIR}/wg"
