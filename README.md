@@ -27,8 +27,8 @@ bash scripts/raw.sh
 bash scripts/v.sh
 ```
 
-Run `bash scripts/sort.sh --fix` only when intentionally formatting source
-lists. The default `sort.sh` mode checks ordering without modifying source files.
+Run `bash scripts/sort.sh` to sort and deduplicate text files under `base/`.
+Use `bash scripts/sort.sh --check` to check ordering without modifying files.
 
 To build the complete release, including `dlc.dat` and `geoip.dat`, run:
 
