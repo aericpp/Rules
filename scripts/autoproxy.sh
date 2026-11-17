@@ -9,7 +9,8 @@ source "${SCRIPT_DIR}/lib.sh"
 OUTPUT_DIR="${BASE_FOLDER}/autoproxy"
 prepare_output_dir "$OUTPUT_DIR"
 
-for category in proxy local reject wg wk; do
+categories=$(list_categories proxy local reject wg wk)
+while IFS= read -r category; do
     raw_file="${OUTPUT_DIR}/${category}_raw.list"
     {
         printf '[AutoProxy]\n'
@@ -17,4 +18,4 @@ for category in proxy local reject wg wk; do
     } | write_atomic_output "$raw_file"
 
     encode_base64_wrapped "$raw_file" > "${OUTPUT_DIR}/${category}.list"
-done
+done <<< "$categories"

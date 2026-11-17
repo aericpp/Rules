@@ -23,38 +23,34 @@ collect_rules() {
     ' {} + | sort -u
 }
 
+list_categories() {
+    {
+        printf '%s\n' "$@"
+        find "${BASE_FOLDER}/base/"{domains,domain,domain_keywords,cidr,process} \
+            -maxdepth 1 -type f -name '*.*' ! -name '.*' -print \
+            | awk -F. '$NF ~ /^[a-z0-9_-]+$/ {print $NF}'
+    } | sort -u
+}
+
 emit_category_rules() {
     local category=$1
 
-    case "$category" in
-        proxy)
-            collect_rules "${BASE_FOLDER}/base/domains" proxy | awk '{print "||" $0}'
-            collect_rules "${BASE_FOLDER}/base/domain" proxy
-            collect_rules "${BASE_FOLDER}/base/domain_keywords" proxy | awk '{print "||*" $0 "*"}'
-            ;;
-        local)
-            collect_rules "${BASE_FOLDER}/base/domains" local | awk '{print "||" $0}'
-            collect_rules "${BASE_FOLDER}/base/domain" local
-            ;;
-        reject)
-            collect_rules "${BASE_FOLDER}/base/domains" reject | awk '{print "||" $0}'
-            collect_rules "${BASE_FOLDER}/base/domain" reject
-            ;;
-        wg)
-            collect_rules "${BASE_FOLDER}/base/domains" wg | awk '{print "||" $0}'
-            collect_rules "${BASE_FOLDER}/base/domain" wg
-            collect_rules "${BASE_FOLDER}/base/domain_keywords" wg | awk '{print "||*" $0 "*"}'
-            ;;
-        wk)
-            collect_rules "${BASE_FOLDER}/base/domains" wk | awk '{print "||" $0}'
-            collect_rules "${BASE_FOLDER}/base/domain" wk
-            collect_rules "${BASE_FOLDER}/base/domain_keywords" wk | awk '{print "||*" $0 "*"}'
-            ;;
-        *)
-            printf 'unknown rule category: %s\n' "$category" >&2
-            return 2
-            ;;
-    esac
+    collect_rules "${BASE_FOLDER}/base/domains" "$category" | awk '{print "||" $0}'
+    collect_rules "${BASE_FOLDER}/base/domain" "$category"
+    collect_rules "${BASE_FOLDER}/base/domain_keywords" "$category" | awk '{print "||*" $0 "*"}'
+}
+
+emit_client_rules() {
+    local category=$1
+    local include_process=$2
+
+    if [[ "$include_process" == true ]]; then
+        collect_rules "${BASE_FOLDER}/base/process" "$category" | awk '{print "PROCESS-NAME," $0}'
+    fi
+    collect_rules "${BASE_FOLDER}/base/domains" "$category" | awk '{print "DOMAIN-SUFFIX," $0}'
+    collect_rules "${BASE_FOLDER}/base/domain" "$category" | awk '{print "DOMAIN," $0}'
+    collect_rules "${BASE_FOLDER}/base/domain_keywords" "$category" | awk '{print "DOMAIN-KEYWORD," $0}'
+    collect_rules "${BASE_FOLDER}/base/cidr" "$category" | awk '{print "IP-CIDR," $0 ",no-resolve"}'
 }
 
 prepare_output_dir() {

@@ -9,6 +9,11 @@ source "${SCRIPT_DIR}/lib.sh"
 OUTPUT_DIR="${BASE_FOLDER}/shadowrocket"
 prepare_output_dir "$OUTPUT_DIR"
 
+categories=$(list_categories proxy direct reject local wg wk)
+while IFS= read -r category; do
+    emit_client_rules "$category" false | write_atomic_output "${OUTPUT_DIR}/${category}.list"
+done <<< "$categories"
+
 temporary=$(mktemp "${OUTPUT_DIR}/config.conf.tmp.XXXXXX")
 trap 'rm -f "$temporary"' EXIT
 
@@ -24,6 +29,10 @@ ipv6 = false
 EOF
 
 {
+    emit_client_rules ai false | awk -F, '
+        $1 == "IP-CIDR" {print $1 "," $2 ",GROUP1"; next}
+        {print $0 ",GROUP1,force-remote-dns"}
+    '
     collect_rules "${BASE_FOLDER}/base/domains" proxy | awk '{print "DOMAIN-SUFFIX," $0 ",GROUP1,force-remote-dns"}'
     collect_rules "${BASE_FOLDER}/base/domains" reject | awk '{print "DOMAIN-SUFFIX," $0 ",REJECT"}'
     collect_rules "${BASE_FOLDER}/base/domain_keywords" proxy | awk '{print "DOMAIN-KEYWORD," $0 ",GROUP1,force-remote-dns"}'

@@ -11,8 +11,14 @@ Surge, Shadowrocket, AutoProxy, raw, and V2Ray-compatible outputs.
 - `base/cidr`: IPv4 CIDR rules
 - `base/process`: process-name rules for Surge
 
-The filename suffix selects the target group: `proxy`, `direct`, `local`,
-`reject`, `wg`, or `wk`. Rules are normalized and deduplicated when generated.
+The file extension selects the target group, for example `proxy`, `ai`,
+`direct`, `local`, `reject`, `wg`, or `wk`. Generators discover groups from
+the source filenames and merge rules with the same extension, preserving
+each rule type supported by the output format. Rules are normalized and
+deduplicated within each type and group.
+
+Shadowrocket exports a separate list for each group. Its standalone
+`config.conf` routes `ai` rules through the existing `GROUP1` policy.
 
 ## Local usage
 
